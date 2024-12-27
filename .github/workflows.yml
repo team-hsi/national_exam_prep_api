@@ -1,0 +1,28 @@
+on:
+  push:
+name: Deploy website on push
+jobs:
+  web-deploy:
+    name: Deployer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to cPanel
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: INSTALLER2
+        run: npm install
+      - name: build
+        run: npm run build
+
+      - name: Deploy action
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{secrets.FTP_SERVER}}
+          username: ${{secrets.FTP_USERNAME}}
+          password: ${{secrets.FTP_PASSWORD}}
+      - name: PWD
+        run: pwd
+
+      - name: echo deploy-duration
+        run: echo "Deployment took ${{ steps.deploy.outputs.duration }} milliseconds"
